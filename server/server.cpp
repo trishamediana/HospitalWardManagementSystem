@@ -7,10 +7,24 @@
 #include <sys/un.h>
 #include <unistd.h>
 #include <signal.h>
+#include <iostream>
+#include <iomanip>
+
+#include <mysql_connection.h>
+#include <mysql_driver.h>
+#include <cppconn/exception.h>
+#include <cppconn/prepared_statement.h>
 
 using namespace std;
+using namespace sql;
 
 #define SOCKET_FILENAME "/tmp/server.sock"
+
+sql::Driver *driver;
+sql::Connection *con;
+sql::PreparedStatement *prep_stmt;
+sql::Statement *stmt;
+sql::ResultSet *res;
 
 int server;
 
@@ -22,6 +36,33 @@ void signal_callback_handler(int signum)
   unlink(SOCKET_FILENAME);
   // signal handled
   exit(0);
+}
+
+void connect_mysql()
+{
+    try {
+        std::cout << "connecting to mysql server...." << std::endl;
+        driver = get_driver_instance();
+        con = driver->connect("tcp://127.0.0.1:3306", "root", "password");
+        std::cout << "connected!" << std::endl;
+        std::cout << "--------------------------------------" << std::endl;
+        std::cout << "use hospital ward" << std::endl;
+        con->setSchema("hospitalward");
+        std::cout << "hospital ward connected" << std::endl;
+        std::cout << "--------------------------------------" << std::endl;
+        std::cout << std::endl;
+
+
+        return con;
+    } catch (sql::SQLException &e) {
+        std::cout << "# ERR: " << e.what();
+        std::cout << " (MySQL error code: " << e.getErrorCode();
+        std::cout << ", SQLState: " << e.getSQLState() << " )" << std::endl;
+    }
+
+    std::cout << std::endl;
+
+    return false
 }
 
 int main(int argc, char **argv)
@@ -55,6 +96,12 @@ int main(int argc, char **argv)
   if (bind(server, (const struct sockaddr *)&server_addr, sizeof(server_addr)) < 0) {
     perror("bind");
     exit(-1);
+  }
+
+  if (connect_mysql())
+  {
+      perror("mysql");
+      exit(-1);
   }
 
   // convert the socket to listen for incoming connections

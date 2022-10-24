@@ -19,6 +19,7 @@ create table beds
         primary key,
     name      int null,
     status_id int not null,
+    room_id   int null,
     constraint status_id
         foreign key (status_id) references status (id)
             on delete cascade

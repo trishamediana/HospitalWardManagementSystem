@@ -10,21 +10,21 @@
 #include <iostream>
 #include <iomanip>
 
-#include <mysql_connection.h>
-#include <mysql_driver.h>
-#include <cppconn/exception.h>
-#include <cppconn/prepared_statement.h>
+//#include "driver/mysql_connection.h"
+//#include "driver/mysql_driver.h"
+//#include "driver/cppconn/exception.h"
+//#include "driver/cppconn/prepared_statement.h"
 
 using namespace std;
-using namespace sql;
+//using namespace sql;
 
 #define SOCKET_FILENAME "/tmp/server.sock"
 
-sql::Driver *driver;
-sql::Connection *con;
-sql::PreparedStatement *prep_stmt;
-sql::Statement *stmt;
-sql::ResultSet *res;
+//sql::Driver *driver;
+//sql::Connection *con;
+//sql::PreparedStatement *prep_stmt;
+//sql::Statement *stmt;
+//sql::ResultSet *res;
 
 int server;
 
@@ -38,7 +38,7 @@ void signal_callback_handler(int signum)
   exit(0);
 }
 
-void connect_mysql()
+/*void connect_mysql()
 {
     try {
         std::cout << "connecting to mysql server...." << std::endl;
@@ -62,8 +62,8 @@ void connect_mysql()
 
     std::cout << std::endl;
 
-    return false
-}
+    return false;
+}*/
 
 int main(int argc, char **argv)
 {
@@ -98,11 +98,11 @@ int main(int argc, char **argv)
     exit(-1);
   }
 
-  if (connect_mysql())
-  {
-      perror("mysql");
-      exit(-1);
-  }
+  //if (connect_mysql())
+  //{
+  //    perror("mysql");
+  //    exit(-1);
+  //}
 
   // convert the socket to listen for incoming connections
   if (listen(server, 0) < 0) {
